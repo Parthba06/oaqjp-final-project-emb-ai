@@ -1,26 +1,35 @@
-import json
 import unittest
 
-from emotion_detection import emotion_detector
-
-
-def dominant(text):
-    """Return the emotion with the highest score for the given text."""
-    result = json.loads(emotion_detector(text))
-    emotions = result["emotionPredictions"][0]["emotion"]
-    return max(emotions, key=emotions.get)
+from EmotionDetection.emotion_detection import emotion_detector
 
 
 class TestEmotionDetector(unittest.TestCase):
-    """Basic tests for the emotion_detector function."""
+    """Unit tests for the emotion_detector function."""
 
     def test_joy(self):
-        """Joy statement is detected as joy."""
-        self.assertEqual(dominant("I am glad this happened"), "joy")
+        """Joy statement returns joy."""
+        result = emotion_detector("I am glad this happened")
+        self.assertEqual(result["dominant_emotion"], "joy")
 
     def test_anger(self):
-        """Anger statement is detected as anger."""
-        self.assertEqual(dominant("I am really mad about this"), "anger")
+        """Anger statement returns anger."""
+        result = emotion_detector("I am really mad about this")
+        self.assertEqual(result["dominant_emotion"], "anger")
+
+    def test_disgust(self):
+        """Disgust statement returns disgust."""
+        result = emotion_detector("I feel disgusted just hearing about this")
+        self.assertEqual(result["dominant_emotion"], "disgust")
+
+    def test_sadness(self):
+        """Sadness statement returns sadness."""
+        result = emotion_detector("I am so sad about this")
+        self.assertEqual(result["dominant_emotion"], "sadness")
+
+    def test_fear(self):
+        """Fear statement returns fear."""
+        result = emotion_detector("I am really afraid that this will happen")
+        self.assertEqual(result["dominant_emotion"], "fear")
 
 
 if __name__ == "__main__":
