@@ -4,7 +4,10 @@ import requests
 
 
 def emotion_detector(text_to_analyze):
-    """Analyze text with Watson NLP and return emotion scores and the dominant emotion."""
+    """Analyze text with Watson NLP and return emotion scores and the dominant emotion.
+
+    For a blank input (status code 400), every value in the result is None.
+    """
     url = (
         "https://sn-watson-emotion.labs.skills.network/v1/"
         "watson.runtime.nlp.v1/NlpService/EmotionPredict"
@@ -13,8 +16,18 @@ def emotion_detector(text_to_analyze):
     input_json = {"raw_document": {"text": text_to_analyze}}
 
     response = requests.post(url, json=input_json, headers=headers, timeout=10)
-    response_dict = json.loads(response.text)
 
+    if response.status_code == 400:
+        return {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None,
+        }
+
+    response_dict = json.loads(response.text)
     emotions = response_dict["emotionPredictions"][0]["emotion"]
     anger_score = emotions["anger"]
     disgust_score = emotions["disgust"]
